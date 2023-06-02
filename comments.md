@@ -22,3 +22,5 @@ III. Adding and configuring tools
 7. npm i notiflix.
 
 IV. Copied all components from "goit-react-hw-03-image-finder"
+
+V. Refactoring <Searchbar>

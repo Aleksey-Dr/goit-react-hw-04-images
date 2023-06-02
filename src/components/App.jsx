@@ -92,6 +92,7 @@ export class App extends Component {
           items={images}
           openModal={this.toggleModal}
         />
+        
         {isLoading &&
           <Loader />}
         
