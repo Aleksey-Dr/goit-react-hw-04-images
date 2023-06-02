@@ -96,7 +96,7 @@ export class App extends Component {
         {isLoading &&
           <Loader />}
         
-        {images.length > 11 &&
+        {!isLoading && images.length > 11 &&
           <Button onClick={this.onLoadMore} />}
 
         {showModal && <Modal onClose={this.toggleModal} largeImage={largeImage} />}

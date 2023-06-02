@@ -24,3 +24,5 @@ III. Adding and configuring tools
 IV. Copied all components from "goit-react-hw-03-image-finder"
 
 V. Refactoring <Searchbar>
+
+VI. Refactoring <Modal>

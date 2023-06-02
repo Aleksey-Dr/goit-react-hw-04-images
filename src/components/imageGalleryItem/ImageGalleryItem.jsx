@@ -4,7 +4,6 @@ import clsx from 'clsx';
 import css from './ImageGalleryItem.module.css';
 
 const ImageGalleryItem = ({ webformatURL, largeImageURL, onOpen }) => {
-
     
     return (
         <li className={clsx(css["gallery-item"])} onClick={() => onOpen(largeImageURL)}>
