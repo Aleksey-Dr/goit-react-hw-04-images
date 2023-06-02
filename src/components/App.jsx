@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 
 import Notiflix from 'notiflix';
 
@@ -13,18 +13,16 @@ import { fetchImages } from '../services/pixabay-api';
 import clsx from 'clsx';
 import css from './App.module.css'
 
-export class App extends Component {
-  state = {
-    images: [],
-    largeImage: '',
-    term: '',
-    isLoading: false,
-    error: false,
-    showModal: false,
-    pageNum: 1,
-  };
+export const App = () => {
+  const [images, setImages] = useState([]);
+  const [largeImage, setLargeImage] = useState('');
+  const [term, setTerm] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [pageNum, setPageNum] = useState(1);
 
-  componentDidUpdate(_, prevState) {
+  useEffect(() => {
 
     Notiflix.Notify.init({
       width: '300px',
@@ -35,72 +33,60 @@ export class App extends Component {
       }
     });
 
-    if (prevState.term !== this.state.term
-      || prevState.pageNum !== this.state.pageNum) {
+    if (term !== '') {
       try {
-        this.setState({ isLoading: true });
-        fetchImages(this.state.term, this.state.pageNum)
+        setIsLoading(true);
+        fetchImages(term, pageNum)
           .then(galery => {
             if (galery.length === 0) {
               Notiflix.Notify.warning('Nothing found for your request');
-              this.setState({ isLoading: false });
+              setIsLoading(false);
             } else {
-              this.setState(prevState => ({
-                images: [...prevState.images, ...galery],
-                isLoading: false
-              }));
+              setImages(prevState => [...prevState, ...galery]);
+              setIsLoading(false);
+              console.log(galery);
             }
           });
       }
-      catch (error) {
-        this.setState({ error: true, isLoading: false });
+      catch (err) {
+        setError(true);
+        setIsLoading(false);
         Notiflix.Notify.failure('Oops... Something went wrong please try again!');
         console.log(error);
       };
     }
+  }, [term, pageNum, error]);
+
+  const handleSearcbarSubmit = term => {
+    setTerm(term);
+    setImages([]);
+    setPageNum(1);
   };
 
-  handleSearcbarSubmit = term => {
-    this.setState({
-      term,
-      images: [],
-      pageNum: 1
-    });
+  const toggleModal = (largeImage) => {
+    setShowModal(!showModal);
+    setLargeImage(largeImage);
   };
 
-  toggleModal = (largeImage) => {
-    this.setState({
-      showModal: !this.state.showModal,
-      largeImage,
-    });
-  };
-
-  onLoadMore = () => {
-    this.setState(prevState => 
-       ({ pageNum: prevState.pageNum + 1 })
-    );
-  };
-
-  render() {
-    const { images, largeImage, showModal, isLoading } = this.state;
+  const onLoadMore = () =>
+    setPageNum(pageNum + 1);
 
     return (
       <div className={clsx(css.app)}>
-        <Searchbar onSubmit={this.handleSearcbarSubmit} />
+        <Searchbar onSubmit={handleSearcbarSubmit} />
 
         <ImageGallery
           items={images}
-          openModal={this.toggleModal}
+          openModal={toggleModal}
         />
         
         {isLoading &&
           <Loader />}
         
         {!isLoading && images.length > 11 &&
-          <Button onClick={this.onLoadMore} />}
+          <Button onClick={onLoadMore} />}
 
-        {showModal && <Modal onClose={this.toggleModal} largeImage={largeImage} />}
+        {showModal && <Modal onClose={toggleModal} largeImage={largeImage} />}
       </div>
     );
-  };
 };
